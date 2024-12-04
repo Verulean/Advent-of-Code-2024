@@ -7,37 +7,25 @@ import adventOfCode.util.PairOf
 object Solution04 : Solution<List<String>>(AOC_YEAR, 4) {
     override fun getInput(handler: InputHandler) = handler.getInput("\n")
 
-    private val xmas = setOf("XMAS", "SAMX")
+    private val xmas = "XMAS"
+    private val directions = arrayOf(-1 to -1, -1 to 0, -1 to 1, 0 to 1, 1 to 1, 1 to 0, 1 to -1, 0 to -1)
 
     override fun solve(input: List<String>): PairOf<Int> {
+        fun getLetter(i: Int, j: Int) = input.getOrNull(i)?.getOrNull(j)
         var ans1 = 0
         var ans2 = 0
-        val m = input.size
-        val n = input.first().count()
         input.withIndex().forEach { (i, row) ->
             row.withIndex().forEach { (j, c) ->
-                // Column
-                if (i <= m - 4 && (0..3).map { input[i + it][j] }.joinToString("") in xmas) {
-                    ans1 += 1
-                }
-                if (j <= n - 4) {
-                    // Row
-                    if (row.substring(j, j + 4) in xmas) {
-                        ans1 += 1
-                    }
-                    // Main diagonal
-                    if (i <= m - 4 && (0..3).map { input[i + it][j + it] }.joinToString("") in xmas) {
-                        ans1 += 1
-                    }
-                    // Off diagonal
-                    if (i >= 3 && (0..3).map { input[i - it][j + it] }.joinToString("") in xmas) {
-                        ans1 += 1
+                if (c == xmas.first()) {
+                    directions.forEach { (di, dj) ->
+                        if ((1..3).all { getLetter(i + di * it, j + dj * it) == xmas[it] }) {
+                            ans1 += 1
+                        }
                     }
                 }
-                // Part 2
-                if (i in 1..m - 2 && j in 1..n - 2 && c == 'A') {
-                    if (setOf(input[i - 1][j - 1], input[i + 1][j + 1]) == setOf('M', 'S')
-                        && setOf(input[i - 1][j + 1], input[i + 1][j - 1]) == setOf('M', 'S')) {
+                if (c == 'A') {
+                    if (setOf(getLetter(i - 1, j - 1), getLetter(i + 1, j + 1)) == setOf('M', 'S')
+                        && setOf(getLetter(i - 1, j + 1), getLetter(i + 1, j - 1)) == setOf('M', 'S')) {
                         ans2 += 1
                     }
                 }
