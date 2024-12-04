@@ -18,7 +18,7 @@ object Solution04 : Solution<List<String>>(AOC_YEAR, 4) {
             row.withIndex().forEach { (j, c) ->
                 if (c == xmas.first()) {
                     directions.forEach { (di, dj) ->
-                        if ((1..3).all { getLetter(i + di * it, j + dj * it) == xmas[it] }) {
+                        if ((1..<xmas.length).all { getLetter(i + di * it, j + dj * it) == xmas[it] }) {
                             ans1 += 1
                         }
                     }
