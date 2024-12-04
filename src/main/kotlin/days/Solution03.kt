@@ -1,7 +1,8 @@
 package days
 
-import adventOfCode.*
-import adventOfCode.util.*
+import adventOfCode.InputHandler
+import adventOfCode.Solution
+import adventOfCode.util.PairOf
 
 object Solution03 : Solution<String>(AOC_YEAR, 3) {
     override fun getInput(handler: InputHandler) = handler.getInput()

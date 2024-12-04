@@ -1,7 +1,9 @@
 package days
 
-import adventOfCode.*
-import adventOfCode.util.*
+import adventOfCode.InputHandler
+import adventOfCode.Solution
+import adventOfCode.util.PairOf
+import adventOfCode.util.ints
 import kotlin.math.abs
 import kotlin.math.sign
 
