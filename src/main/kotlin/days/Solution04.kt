@@ -18,14 +18,17 @@ object Solution04 : Solution<List<String>>(AOC_YEAR, 4) {
         var ans2 = 0
         input.withIndex().forEach { (i, row) ->
             row.withIndex().forEach { (j, c) ->
-                if (c == xmas.first()) {
-                    ans1 += directions.count { (di, dj) ->
-                        (1..<xmas.length).all { getLetter(i + di * it, j + dj * it) == xmas[it] }
+                when (c) {
+                    xmas.first() -> {
+                        ans1 += directions.count { (di, dj) ->
+                            (1..<xmas.length).all { getLetter(i + di * it, j + dj * it) == xmas[it] }
+                        }
                     }
-                } else if (c == 'A') {
-                    if (setOf(input[i - 1, j - 1], input[i + 1, j + 1]) == setOf('M', 'S')
-                        && setOf(input[i - 1, j + 1], input[i + 1, j - 1]) == setOf('M', 'S')) {
-                        ans2 += 1
+                    'A' -> {
+                        if (setOf(input[i - 1, j - 1], input[i + 1, j + 1]) == setOf('M', 'S')
+                            && setOf(input[i - 1, j + 1], input[i + 1, j - 1]) == setOf('M', 'S')) {
+                            ans2 += 1
+                        }
                     }
                 }
             }
