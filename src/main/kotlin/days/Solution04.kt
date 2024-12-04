@@ -9,6 +9,7 @@ object Solution04 : Solution<List<String>>(AOC_YEAR, 4) {
 
     private const val xmas = "XMAS"
     private val directions = arrayOf(-1 to -1, -1 to 0, -1 to 1, 0 to 1, 1 to 1, 1 to 0, 1 to -1, 0 to -1)
+    private val ms = setOf('M', 'S')
 
     private operator fun List<String>.get(i: Int, j: Int) = this.getOrNull(i)?.getOrNull(j)
 
@@ -25,8 +26,8 @@ object Solution04 : Solution<List<String>>(AOC_YEAR, 4) {
                         }
                     }
                     'A' -> {
-                        if (setOf(input[i - 1, j - 1], input[i + 1, j + 1]) == setOf('M', 'S')
-                            && setOf(input[i - 1, j + 1], input[i + 1, j - 1]) == setOf('M', 'S')) {
+                        if (setOf(input[i - 1, j - 1], input[i + 1, j + 1]) == ms
+                            && setOf(input[i - 1, j + 1], input[i + 1, j - 1]) == ms) {
                             ans2 += 1
                         }
                     }
