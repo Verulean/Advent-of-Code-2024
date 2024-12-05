@@ -17,14 +17,14 @@ object Solution05 : Solution<Pair<Collection<OrderingRule>, Collection<PrinterUp
         )
     }
 
-    private fun OrderingRule.appliesToUpdate(update: PrinterUpdate) = update.containsKey(this.first) && update.containsKey(this.second)
+    private fun OrderingRule.appliesTo(update: PrinterUpdate) = update.containsKey(this.first) && update.containsKey(this.second)
     private fun OrderingRule.isSatisfied(update: PrinterUpdate) = update.getValue(this.first) < update.getValue(this.second)
-    private fun PrinterUpdate.middlePage() = this.entries.first { it.value == this.size / 2 }.key
-    private fun PrinterUpdate.isSorted(rules: Collection<OrderingRule>) = rules.all { !it.appliesToUpdate(this) || it.isSatisfied(this) }
+    private val PrinterUpdate.middlePage get() = this.entries.first { it.value == this.size / 2 }.key
+    private fun PrinterUpdate.isSorted(rules: Collection<OrderingRule>) = rules.all { !it.appliesTo(this) || it.isSatisfied(this) }
 
     private fun rectifyUpdate(rules: Collection<OrderingRule>, update: PrinterUpdate): Int {
         val newUpdate = update.toMutableMap()
-        val applicableRules = rules.filter { it.appliesToUpdate(update) }
+        val applicableRules = rules.filter { it.appliesTo(update) }
         while (true) {
             var changed = false
             applicableRules.forEach {
@@ -38,7 +38,7 @@ object Solution05 : Solution<Pair<Collection<OrderingRule>, Collection<PrinterUp
                 }
             }
             if (!changed) {
-                return newUpdate.middlePage()
+                return newUpdate.middlePage
             }
         }
     }
@@ -46,7 +46,7 @@ object Solution05 : Solution<Pair<Collection<OrderingRule>, Collection<PrinterUp
     override fun solve(input: Pair<Collection<OrderingRule>, Collection<PrinterUpdate>>): PairOf<Int> {
         val (rules, updates) = input
         return updates.fold(0 to 0) { acc, update ->
-            if (update.isSorted(rules)) acc.first + update.middlePage() to acc.second
+            if (update.isSorted(rules)) acc.first + update.middlePage to acc.second
             else acc.first to acc.second + rectifyUpdate(rules, update)
         }
     }
