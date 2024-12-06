@@ -14,7 +14,6 @@ object Solution04 : Solution<List<String>>(AOC_YEAR, 4) {
     private operator fun List<String>.get(i: Int, j: Int) = this.getOrNull(i)?.getOrNull(j)
 
     override fun solve(input: List<String>): PairOf<Int> {
-        fun getLetter(i: Int, j: Int) = input.getOrNull(i)?.getOrNull(j)
         var ans1 = 0
         var ans2 = 0
         input.withIndex().forEach { (i, row) ->
@@ -22,7 +21,7 @@ object Solution04 : Solution<List<String>>(AOC_YEAR, 4) {
                 when (c) {
                     xmas.first() -> {
                         ans1 += directions.count { (di, dj) ->
-                            (1..<xmas.length).all { getLetter(i + di * it, j + dj * it) == xmas[it] }
+                            (1..<xmas.length).all { input[i + di * it, j + dj * it] == xmas[it] }
                         }
                     }
                     'A' -> {
