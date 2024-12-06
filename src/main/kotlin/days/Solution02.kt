@@ -29,11 +29,10 @@ object Solution02 : Solution<List<List<Int>>>(AOC_YEAR, 2) {
             0 -> return ReportSafety.SAFE
             1 -> {
                 val i = candidates.single()
-                if (i == 0 || i == differences.lastIndex) {
-                    return ReportSafety.PARTIALLY_SAFE
-                } else if ((differences[i] + differences[i - 1]).isSafe()) {
-                    return ReportSafety.PARTIALLY_SAFE
-                } else if ((differences[i] + differences[i + 1]).isSafe()) {
+                if (i == 0
+                    || i == differences.lastIndex
+                    || (differences[i] + differences[i - 1]).isSafe()
+                    || (differences[i] + differences[i + 1]).isSafe()) {
                     return ReportSafety.PARTIALLY_SAFE
                 }
             }
