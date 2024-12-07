@@ -19,10 +19,9 @@ object Solution07 : Solution<Collection<Pair<Long, List<Long>>>>(AOC_YEAR, 7) {
         val tail = numbers.drop(1)
         return when {
             tail.isEmpty() -> num == testValue
-            testValue < 0 -> false
             testValue % num == 0L && isTractable(testValue / num, tail, allowConcat) -> true
             allowConcat && testValue.endsWith(num) && isTractable(testValue.without(num), tail, true) -> true
-            else -> isTractable(testValue - num, tail, allowConcat)
+            else -> testValue > num && isTractable(testValue - num, tail, allowConcat)
         }
     }
 
