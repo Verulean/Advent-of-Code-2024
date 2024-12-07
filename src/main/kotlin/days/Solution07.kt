@@ -25,6 +25,7 @@ object Solution07 : Solution<Collection<Pair<Long, List<Long>>>>(AOC_YEAR, 7) {
             else -> isTractable(testValue - num, tail, allowConcat)
         }
     }
+
     override fun solve(input: Collection<Pair<Long, List<Long>>>): PairOf<Long> {
         return input.fold(0L to 0L) { (sum1, sum2), (testValue, numbers) ->
             when {
