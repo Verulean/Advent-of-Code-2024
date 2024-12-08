@@ -15,7 +15,7 @@ object Solution08 : Solution<List<String>>(AOC_YEAR, 8) {
 
     private fun Point2D.isInBounds(bounds: MapBounds) = this.first in bounds.first && this.second in bounds.second
 
-    private fun generateAntinodes(antennae: List<Point2D>, bounds: MapBounds, f: AntinodeFinder) = antennae.flatMapIndexed { i, p1 ->
+    private fun findAntinodes(antennae: List<Point2D>, bounds: MapBounds, f: AntinodeFinder) = antennae.flatMapIndexed { i, p1 ->
         antennae.drop(i + 1).flatMap { p2 -> f(p1, p2, p2 - p1, bounds) }
     }
 
@@ -41,7 +41,7 @@ object Solution08 : Solution<List<String>>(AOC_YEAR, 8) {
         val antennaMap = input.flatMapIndexed { i, line ->
             line.mapIndexedNotNull { j, c -> if (c == '.') null else c to (i to j) }
         }.groupBy({ it.first }, { it.second })
-        fun antinodeCount(f: AntinodeFinder) = antennaMap.values.flatMap { generateAntinodes(it, bounds, f) }.toSet().size
-        return antinodeCount(::find1) to antinodeCount(::find2)
+        fun countAntinodes(f: AntinodeFinder) = antennaMap.values.flatMap { findAntinodes(it, bounds, f) }.toSet().size
+        return countAntinodes(::find1) to countAntinodes(::find2)
     }
 }
