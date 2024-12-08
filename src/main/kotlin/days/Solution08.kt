@@ -13,17 +13,17 @@ private typealias AntinodeFinder = (Point2D, Point2D, Point2D, MapBounds) -> Seq
 object Solution08 : Solution<List<String>>(AOC_YEAR, 8) {
     override fun getInput(handler: InputHandler) = handler.getInput("\n")
 
-    private fun Point2D.isInBounds(bounds: MapBounds) = this.first in bounds.first && this.second in bounds.second
+    private operator fun MapBounds.contains(p: Point2D) = p.first in this.first && p.second in this.second
 
     private fun findAntinodes(antennae: List<Point2D>, bounds: MapBounds, f: AntinodeFinder) = antennae.flatMapIndexed { i, p1 ->
         antennae.drop(i + 1).flatMap { p2 -> f(p1, p2, p2 - p1, bounds) }
     }
 
-    private fun find1(p1: Point2D, p2: Point2D, delta: Point2D, bounds: MapBounds) = sequenceOf(p1 - delta, p2 + delta).filter { it.isInBounds(bounds) }
+    private fun find1(p1: Point2D, p2: Point2D, delta: Point2D, bounds: MapBounds) = sequenceOf(p1 - delta, p2 + delta).filter { it in bounds }
 
     private fun find2(p1: Point2D, p2: Point2D, delta: Point2D, bounds: MapBounds) =
-        generateSequence(p1) { p -> p - delta }.takeWhile { it.isInBounds(bounds) } +
-            generateSequence(p2) { p -> p + delta }.takeWhile { it.isInBounds(bounds) }
+        generateSequence(p1) { p -> p - delta }.takeWhile { it in bounds } +
+            generateSequence(p2) { p -> p + delta }.takeWhile { it in bounds }
 
     override fun solve(input: List<String>): PairOf<Int> {
         val bounds = input.indices to input.first().indices
