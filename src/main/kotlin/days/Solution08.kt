@@ -8,35 +8,32 @@ import adventOfCode.util.minus
 import adventOfCode.util.plus
 
 private typealias MapBounds = PairOf<IntRange>
+private typealias AntinodeFinder = (Point2D, Point2D, Point2D, MapBounds) -> Collection<Point2D>
 
 object Solution08 : Solution<List<String>>(AOC_YEAR, 8) {
     override fun getInput(handler: InputHandler) = handler.getInput("\n")
 
     private fun Point2D.isInBounds(bounds: MapBounds) = this.first in bounds.first && this.second in bounds.second
 
-    private fun findAntinodes(antennae: List<Point2D>, bounds: MapBounds) = antennae.flatMapIndexed { i, p1 ->
-        antennae.drop(i + 1).flatMap { p2 ->
-            val delta = p2 - p1
-            sequenceOf(p1 - delta, p2 + delta)
-        }
-    }.filter { it.isInBounds(bounds) }
+    private fun generateAntinodes(antennae: List<Point2D>, bounds: MapBounds, f: AntinodeFinder) = antennae.flatMapIndexed { i, p1 ->
+        antennae.drop(i + 1).flatMap { p2 -> f(p1, p2, p2 - p1, bounds) }
+    }
 
-    private fun findAntinodes2(antennae: List<Point2D>, bounds: MapBounds) = antennae.flatMapIndexed { i, p1 ->
-        antennae.drop(i + 1).flatMap { p2 ->
-            val delta = p2 - p1
-            val antinodes = mutableSetOf(p1, p2)
-            var p = p1 - delta
-            while (p.isInBounds(bounds)) {
-                antinodes.add(p)
-                p -= delta
-            }
-            p = p2 + delta
-            while (p.isInBounds(bounds)) {
-                antinodes.add(p)
-                p += delta
-            }
-            antinodes
+    private fun find1(p1: Point2D, p2: Point2D, delta: Point2D, bounds: MapBounds) = setOf(p1 - delta, p2 + delta).filter { it.isInBounds(bounds) }
+
+    private fun find2(p1: Point2D, p2: Point2D, delta: Point2D, bounds: MapBounds) = run {
+        val antinodes = mutableSetOf(p1, p2)
+        var p = p1 - delta
+        while (p.isInBounds(bounds)) {
+            antinodes.add(p)
+            p -= delta
         }
+        p = p2 + delta
+        while (p.isInBounds(bounds)) {
+            antinodes.add(p)
+            p += delta
+        }
+        antinodes
     }
 
     override fun solve(input: List<String>): PairOf<Int> {
@@ -44,7 +41,7 @@ object Solution08 : Solution<List<String>>(AOC_YEAR, 8) {
         val antennaMap = input.flatMapIndexed { i, line ->
             line.mapIndexedNotNull { j, c -> if (c == '.') null else c to (i to j) }
         }.groupBy({ it.first }, { it.second })
-        fun antinodeCount(f: (antennae: List<Point2D>, bounds: MapBounds) -> Collection<Point2D>) = antennaMap.values.flatMap { f(it, bounds) }.toSet().size
-        return antinodeCount(::findAntinodes) to antinodeCount(::findAntinodes2)
+        fun antinodeCount(f: AntinodeFinder) = antennaMap.values.flatMap { generateAntinodes(it, bounds, f) }.toSet().size
+        return antinodeCount(::find1) to antinodeCount(::find2)
     }
 }
