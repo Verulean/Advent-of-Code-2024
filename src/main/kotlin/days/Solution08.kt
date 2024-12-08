@@ -8,7 +8,7 @@ import adventOfCode.util.minus
 import adventOfCode.util.plus
 
 private typealias MapBounds = PairOf<IntRange>
-private typealias AntinodeFinder = (Point2D, Point2D, Point2D, MapBounds) -> Collection<Point2D>
+private typealias AntinodeFinder = (Point2D, Point2D, Point2D, MapBounds) -> Sequence<Point2D>
 
 object Solution08 : Solution<List<String>>(AOC_YEAR, 8) {
     override fun getInput(handler: InputHandler) = handler.getInput("\n")
@@ -19,22 +19,11 @@ object Solution08 : Solution<List<String>>(AOC_YEAR, 8) {
         antennae.drop(i + 1).flatMap { p2 -> f(p1, p2, p2 - p1, bounds) }
     }
 
-    private fun find1(p1: Point2D, p2: Point2D, delta: Point2D, bounds: MapBounds) = setOf(p1 - delta, p2 + delta).filter { it.isInBounds(bounds) }
+    private fun find1(p1: Point2D, p2: Point2D, delta: Point2D, bounds: MapBounds) = sequenceOf(p1 - delta, p2 + delta).filter { it.isInBounds(bounds) }
 
-    private fun find2(p1: Point2D, p2: Point2D, delta: Point2D, bounds: MapBounds) = run {
-        val antinodes = mutableSetOf(p1, p2)
-        var p = p1 - delta
-        while (p.isInBounds(bounds)) {
-            antinodes.add(p)
-            p -= delta
-        }
-        p = p2 + delta
-        while (p.isInBounds(bounds)) {
-            antinodes.add(p)
-            p += delta
-        }
-        antinodes
-    }
+    private fun find2(p1: Point2D, p2: Point2D, delta: Point2D, bounds: MapBounds) =
+        generateSequence(p1) { p -> p - delta }.takeWhile { it.isInBounds(bounds) } +
+            generateSequence(p2) { p -> p + delta }.takeWhile { it.isInBounds(bounds) }
 
     override fun solve(input: List<String>): PairOf<Int> {
         val bounds = input.indices to input.first().indices
