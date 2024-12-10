@@ -20,12 +20,11 @@ object Solution10 : Solution<List<List<Int>>>(AOC_YEAR, 10) {
             }.toSet()
         }
 
-    override fun solve(input: List<List<Int>>): PairOf<Int> {
-        return input.indices.flatMap { i -> input.first().indices.map { j -> i to j } }
+    override fun solve(input: List<List<Int>>) =
+        input.indices.flatMap { i -> input.first().indices.map { j -> i to j } }
             .filter { input.getOrNull(it) == 0 }
             .fold(0 to 0) { acc, start ->
                 val paths = getPaths(input, start)
                 acc + (paths.map { it.last() }.toSet().size to paths.size)
             }
-    }
 }
