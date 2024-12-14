@@ -20,7 +20,7 @@ object Solution06 : Solution<Collection<String>>(AOC_YEAR, 6) {
 
     private operator fun Point2D.contains(point: Point2D) = point.first in 0..<this.first && point.second in 0..<this.second
 
-    private fun simulatePatrol(walls: Set<Point2D>, start: Point2D, bounds: Point2D): Set<Point2D>? {
+    private fun simulatePatrol(walls: Set<Point2D>, start: Point2D, bounds: Point2D, trackEdges: Boolean): Set<Point2D>? {
         var pos = start
         var direction = -1 to 0
         val seen = mutableSetOf(pos to direction)
@@ -28,6 +28,7 @@ object Solution06 : Solution<Collection<String>>(AOC_YEAR, 6) {
             val newPos = pos + direction
             when {
                 newPos in walls -> {
+                    seen.add(pos to direction)
                     direction = direction.turn()
                 }
                 newPos !in bounds -> {
@@ -38,7 +39,7 @@ object Solution06 : Solution<Collection<String>>(AOC_YEAR, 6) {
                 }
                 else -> {
                     pos = newPos
-                    seen.add(pos to direction)
+                    if (trackEdges) seen.add(pos to direction)
                 }
             }
         }
@@ -56,7 +57,7 @@ object Solution06 : Solution<Collection<String>>(AOC_YEAR, 6) {
                 }
             }
         }
-        val seenPositions = simulatePatrol(walls, start, bounds)!!
-        return seenPositions.size to seenPositions.count { pos -> simulatePatrol(walls.union(setOf(pos)), start, bounds) == null }
+        val seenPositions = simulatePatrol(walls, start, bounds, true)!!
+        return seenPositions.size to seenPositions.count { pos -> simulatePatrol(walls.union(setOf(pos)), start, bounds, false) == null }
     }
 }
