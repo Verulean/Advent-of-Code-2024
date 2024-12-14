@@ -2,7 +2,10 @@ package days
 
 import adventOfCode.InputHandler
 import adventOfCode.Solution
-import adventOfCode.util.*
+import adventOfCode.util.PairOf
+import adventOfCode.util.Point2D
+import adventOfCode.util.ints
+import adventOfCode.util.plus
 
 object Solution14 : Solution<PairOf<List<Point2D>>>(AOC_YEAR, 14) {
     override fun getInput(handler: InputHandler) = handler.getInput("\n").map {
@@ -10,9 +13,11 @@ object Solution14 : Solution<PairOf<List<Point2D>>>(AOC_YEAR, 14) {
         (x to y) to (vx to vy)
     }.unzip()
 
-    private val gridSize = 101 to 103
-    private val xMid = gridSize.first / 2
-    private val yMid = gridSize.second / 2
+    private const val X_DIMENSION = 101
+    private const val Y_DIMENSION = 103
+    private const val X_MID = X_DIMENSION / 2
+    private const val Y_MID = Y_DIMENSION / 2
+    private const val MODULAR_INVERSE = 51
 
     private operator fun Point2D.rem(other: Point2D): Point2D {
         val (x1, y1) = this
@@ -22,39 +27,41 @@ object Solution14 : Solution<PairOf<List<Point2D>>>(AOC_YEAR, 14) {
 
     private val Point2D.quadrant get() = when
     {
-        this.first < xMid && this.second < yMid -> 0
-        this.first < xMid && this.second > yMid -> 1
-        this.first > xMid && this.second < yMid -> 2
-        this.first > xMid && this.second > yMid -> 3
+        this.first < X_MID && this.second < Y_MID -> 0
+        this.first < X_MID && this.second > Y_MID -> 1
+        this.first > X_MID && this.second < Y_MID -> 2
+        this.first > X_MID && this.second > Y_MID -> 3
         else -> null
     }
 
-    private fun List<Point2D>.step(velocities: List<Point2D>, n: Int = 1) = this.zip(velocities).map { (it.first + n * it.second) % gridSize }
+    private fun List<Point2D>.step(velocities: List<Point2D>) = this.zip(velocities).map { (it.first + it.second) % (X_DIMENSION to Y_DIMENSION) }
 
     private val List<Point2D>.safetyFactor get() = this.mapNotNull { it.quadrant }
         .groupingBy { it }
         .eachCount()
         .values
-        .fold(1L) { acc, count -> acc * count }
+        .fold(1) { acc, count -> acc * count }
 
-    private val List<Point2D>.isUnique get(): Boolean {
-        val seen: MutableSet<Point2D> = mutableSetOf()
-        this.forEach {
-            if (!seen.add(it)) return false
-        }
-        return true
+    private val List<Int>.variance get(): Double {
+        val mean = this.average()
+        return this.map { it - mean }.map { it * it }.average()
     }
 
-    override fun solve(input: PairOf<List<Point2D>>): Pair<Long, Int> {
+    override fun solve(input: PairOf<List<Point2D>>): PairOf<Int> {
         var points = input.first
         val velocities = input.second
-        points = points.step(velocities, 100)
-        val ans1 = points.safetyFactor
-        var t = 100
-        while (!points.isUnique) {
+        var ans1 = 0
+        var bestX = 10_000.0 to 0
+        var bestY = 10_000.0 to 0
+        (1..Y_DIMENSION).forEach { t ->
             points = points.step(velocities)
-            t += 1
+            if (t == 100) ans1 = points.safetyFactor
+            val xVariance = points.map { it.first }.variance
+            if (xVariance < bestX.first) bestX = xVariance to t
+            val yVariance = points.map { it.second }.variance
+            if (yVariance < bestY.first) bestY = yVariance to t
         }
-        return ans1 to t
+        val ans2 = (MODULAR_INVERSE * (bestY.second * X_DIMENSION + bestX.second * Y_DIMENSION)) % (X_DIMENSION * Y_DIMENSION)
+        return ans1 to ans2
     }
 }
