@@ -19,6 +19,7 @@ object Solution14 : Solution<PairOf<List<Point2D>>>(AOC_YEAR, 14) {
         val (x2, y2) = other
         return (x1 % x2 + x2) % x2 to (y1 % y2 + y2) % y2
     }
+
     private val Point2D.quadrant get() = when
     {
         this.first < xMid && this.second < yMid -> 0
@@ -29,11 +30,13 @@ object Solution14 : Solution<PairOf<List<Point2D>>>(AOC_YEAR, 14) {
     }
 
     private fun List<Point2D>.step(velocities: List<Point2D>, n: Int = 1) = this.zip(velocities).map { (it.first + n * it.second) % gridSize }
+
     private val List<Point2D>.safetyFactor get() = this.mapNotNull { it.quadrant }
         .groupingBy { it }
         .eachCount()
         .values
         .fold(1L) { acc, count -> acc * count }
+
     private val List<Point2D>.isUnique get(): Boolean {
         val seen: MutableSet<Point2D> = mutableSetOf()
         this.forEach {
