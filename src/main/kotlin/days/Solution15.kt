@@ -73,14 +73,8 @@ object Solution15 : Solution<PairOf<String>>(AOC_YEAR, 15) {
         var (walls, boxes, robot) = parseGrid(gridStr.split("\n"))
         var (walls2, boxes2, robot2) = parseGrid(newGridStr.split("\n"))
         steps.mapNotNull { DIRECTIONS[it] }.forEach { direction ->
-            step(walls, boxes, robot, direction)?.let { move ->
-                boxes = move.first
-                robot = move.second
-            }
-            step2(walls2, boxes2, robot2, direction)?.let { move ->
-                boxes2 = move.first
-                robot2 = move.second
-            }
+            step(walls, boxes, robot, direction)?.let { boxes = it.first; robot = it.second }
+            step2(walls2, boxes2, robot2, direction)?.let { boxes2 = it.first; robot2 = it.second }
         }
         return boxes.sumOf { it.gps } to boxes2.sumOf { it.gps }
     }
