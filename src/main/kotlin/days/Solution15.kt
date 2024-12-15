@@ -61,7 +61,7 @@ object Solution15 : Solution<PairOf<String>>(AOC_YEAR, 15) {
                         .filter { it in boxes && movedBoxes.add(it) }
                         .forEach { queue.add(it) }
                 }
-                return boxes - movedBoxes + movedBoxes.map { it + direction} to nextPos
+                return boxes - movedBoxes + movedBoxes.map { it + direction } to nextPos
             }
         }
     }
