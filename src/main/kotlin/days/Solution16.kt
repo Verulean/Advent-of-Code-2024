@@ -94,7 +94,7 @@ object Solution16 : Solution<Triple<Set<Point2D>, Point2D, Point2D>>(AOC_YEAR, 1
         return bestStates.map { it.first }.toSet().size
     }
 
-    override fun solve(input: Triple<Set<Point2D>, Point2D, Point2D>): Pair<Any?, Any?> {
+    override fun solve(input: Triple<Set<Point2D>, Point2D, Point2D>): PairOf<Int> {
         val (walls, start, end) = input
         val startState = start to (0 to 1)
         val (bestCost, ans1) = dijkstra(walls, startState, end)
