@@ -45,17 +45,19 @@ object Solution20 : Solution<Triple<Set<Point2D>, Point2D, Point2D>>(AOC_YEAR, 2
         return paths
     }
 
-    private fun List<Point2D>.getCheats(cheatTime: Int): Set<PairOf<Point2D>> {
-        val cheaters: MutableSet<PairOf<Point2D>> = mutableSetOf()
-        val inversePath = this.withIndex().associate { (t, p) -> p to t }
-        this.withIndex().forEach { (t, p) ->
-            (-cheatTime..cheatTime).forEach { di ->
-                val yCheat = cheatTime - abs(di)
-                (-yCheat..yCheat).forEach { dj ->
-                    val dt = abs(di) + abs(dj)
-                    val p2 = p + (di to dj)
-                    if (inversePath.getOrDefault(p2, 0) - t >= 100 + dt) {
-                        cheaters.add(p to p2)
+    private fun Collection<List<Point2D>>.getCheats(maxCheatTime: Int): Map<Int, Set<PairOf<Point2D>>> {
+        val cheaters: MutableMap<Int, MutableSet<PairOf<Point2D>>> = mutableMapOf()
+        this.forEach { path ->
+            val inversePath = path.withIndex().associate { (t, p) -> p to t }
+            path.withIndex().forEach { (t, p) ->
+                (-maxCheatTime..maxCheatTime).forEach { di ->
+                    val yCheat = maxCheatTime - abs(di)
+                    (-yCheat..yCheat).forEach { dj ->
+                        val dt = abs(di) + abs(dj)
+                        val p2 = p + (di to dj)
+                        if (inversePath.getOrDefault(p2, 0) - t >= 100 + dt) {
+                            cheaters.getOrPut(dt) { mutableSetOf() }.add(p to p2)
+                        }
                     }
                 }
             }
@@ -65,12 +67,7 @@ object Solution20 : Solution<Triple<Set<Point2D>, Point2D, Point2D>>(AOC_YEAR, 2
 
     override fun solve(input: Triple<Set<Point2D>, Point2D, Point2D>): PairOf<Int> {
         val (walls, start, end) = input
-        val cheats1: MutableSet<PairOf<Point2D>> = mutableSetOf()
-        val cheats2: MutableSet<PairOf<Point2D>> = mutableSetOf()
-        walls.getPaths(start, end).forEach { path ->
-            cheats1 += path.getCheats(2)
-            cheats2 += path.getCheats(20)
-        }
-        return cheats1.size to cheats2.size
+        val cheats = walls.getPaths(start, end).getCheats(20)
+        return (cheats[2]?.size ?: 0) to cheats.values.sumOf { it.size }
     }
 }
