@@ -22,14 +22,10 @@ object Solution22 : Solution<List<Long>>(AOC_YEAR, 22) {
     override fun solve(input: List<Long>): Pair<Any?, Any?> {
         var ans1 = 0L
         val profits: MutableMap<List<Long>, Long> = mutableMapOf()
-        input.forEach {
-            var n = it
-            val prices: MutableList<Long> = mutableListOf()
-            repeat(2000) {
-                n = n.evolve()
-                prices.add(n.price)
-            }
-            ans1 += n
+        input.forEach { secretNumber ->
+            val numbers = generateSequence(secretNumber) { it.evolve() }.take(2001).toList()
+            ans1 += numbers.last()
+            val prices = numbers.map { it.price }
             val deltas = prices.zipWithNext { a, b -> b - a }
             val seenTriggers: MutableSet<List<Long>> = mutableSetOf()
             deltas.windowed(TRIGGER_LENGTH).zip(prices.drop(TRIGGER_LENGTH)).forEach { (trigger, price) ->
